@@ -11,22 +11,30 @@
 
 cInverter::cInverter(std::string devicename) {
   device = devicename;
-  status1[0] = 0;
-  status2[0] = 0;
+  status_qpigs[0] = 0;
+  status_qpiri[0] = 0;
+  status_qpigs2[0] = 0;
   warnings[0] = 0;
   mode = 0;
 }
 
 string *cInverter::GetQpigsStatus() {
   m.lock();
-  string *result = new string(status1);
+  string *result = new string(status_qpigs);
+  m.unlock();
+  return result;
+}
+
+string *cInverter::GetQpigs2Status() {
+  m.lock();
+  string *result = new string(status_qpigs2);
   m.unlock();
   return result;
 }
 
 string *cInverter::GetQpiriStatus() {
   m.lock();
-  string *result = new string(status2);
+  string *result = new string(status_qpiri);
   m.unlock();
   return result;
 }
@@ -93,7 +101,7 @@ bool cInverter::query(const char *cmd) {
   tcflush(fd, TCOFLUSH);
 
   // ---------------------------------------------------------------
-
+  lprintf("DEBUG:  Execute command %s", cmd);
   // Generating CRC for a command
   uint16_t crc = cal_crc_half((uint8_t*)cmd, strlen(cmd));
   n = strlen(cmd);
@@ -150,8 +158,8 @@ bool cInverter::query(const char *cmd) {
   char *startbuf = 0;
   char *endbuf = 0;
   do {
-    // According to protocol manual, it appears no query should ever exceed 120 byte size in response
-    n = read(fd, (void*)buf+i, 120 - i);
+    // According to protocol manual, it appears no query should ever exceed 128 byte size in response
+    n = read(fd, (void*)buf+i, 128 - i);
     if (n < 0)
     {
       if (time(NULL) - started > 5)     // Wait 5 secs before timeout
@@ -213,9 +221,20 @@ void cInverter::poll() {
       if (query("QPIGS") &&
     strcmp((char *)&buf[1], "NAK") != 0) {
         m.lock();
-        strcpy(status1, (const char*)buf+1);
+        strcpy(status_qpigs, (const char*)buf+1);
         m.unlock();
         ups_qpigs_changed = true;
+      }
+    }
+
+    // Reading QPIGS2 status
+    if (!ups_qpigs2_changed) {
+      if (query("QPIGS2") &&
+    strcmp((char *)&buf[1], "NAK") != 0) {
+        m.lock();
+        strcpy(status_qpigs2, (const char*)buf+1);
+        m.unlock();
+        ups_qpigs2_changed = true;
       }
     }
 
@@ -224,7 +243,7 @@ void cInverter::poll() {
       if (query("QPIRI") &&
     strcmp((char *)&buf[1], "NAK") != 0) {
         m.lock();
-        strcpy(status2, (const char*)buf+1);
+        strcpy(status_qpiri, (const char*)buf+1);
         m.unlock();
         ups_qpiri_changed = true;
       }
@@ -249,7 +268,7 @@ void cInverter::ExecuteCmd(const string cmd) {
   // Sending any command raw
   if (query(cmd.data())) {
     m.lock();
-    strcpy(status2, (const char*)buf+1);
+    strcpy(status_qpiri, (const char*)buf+1);
     m.unlock();
   }
 }
