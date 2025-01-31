@@ -144,6 +144,11 @@ registerTopic "PV2_in_voltage" "V" "solar-panel-large" "voltage" "PV2 in voltage
 registerTopic "PV2_in_watts" "W" "solar-panel-large" "power" "PV2 in watts"
 registerTopic "PV2_charging_power" "W" "solar-panel-large" "power" "PV2 charging power"
 registerTopic "PV_total_charging_power" "W" "solar-panel-large" "power" "PV Total charging power"
+registerTopic "PV2_in_current" "A" "solar-panel-large" "current" "PV2 in current"
+registerTopic "PV2_in_voltage" "V" "solar-panel-large" "voltage" "PV2 in voltage"
+registerTopic "PV2_in_watts" "W" "solar-panel-large" "power" "PV2 in watts"
+registerTopic "PV2_charging_power" "W" "solar-panel-large" "power" "PV2 charging power"
+registerTopic "PV_total_charging_power" "W" "solar-panel-large" "power" "PV Total charging power"
 
 # Add in a separate topic so we can send raw commands from assistant back to the inverter via MQTT (such as changing power modes etc)...
 registerInverterRawCMD
