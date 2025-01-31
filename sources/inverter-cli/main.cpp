@@ -240,7 +240,7 @@ float batt_redischarge_voltage;
             string *reply_qpigs2   = ups->GetQpigs2Status();
             string *warnings = ups->GetWarnings();
 
-            if (reply1 && reply2 && warnings) {
+            if (reply_qpigs && reply_qpiri && reply_qpigs2 && warnings) {
 
                 // Parse and display values, QPIGS, * means contained in output, ^ is not included in output
                 sscanf(reply_qpigs->c_str(), "%f %f %f %f %d %d %d %d %f %d %d %d %f %f %f %d %s %d %d %d %s",
