@@ -324,8 +324,8 @@ float batt_redischarge_voltage;
                     pv_input_watts = (scc_voltage * pv_input_current) * wattfactor;
                     pv2_input_watts = (scc_voltage * pv2_input_current) * wattfactor;
                 }  else  {
-                    pv_input_watts = (voltage_batt * pv_input_current) * wattfactor;
-                    pv2_input_watts = (voltage_batt * pv2_input_current) * wattfactor;
+                    pv_input_watts = (pv_input_voltage * pv_input_current) * wattfactor;
+                    pv2_input_watts = (pv2_input_voltage * pv2_input_current) * wattfactor;
                 }
 
                 // Calculate watt-hours generated per run interval period (given as program argument)
